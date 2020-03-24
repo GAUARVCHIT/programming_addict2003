@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:programmingaddict2003/models/api_response.dart';
+import 'package:programmingaddict2003/models/note.dart';
 import 'package:programmingaddict2003/models/notes_for_listing.dart';
 
 class NotesService {
@@ -14,15 +15,7 @@ class NotesService {
         final jsonData = jsonDecode(data.body);
         final notes = <NotesForListing>[];
         for (var item in jsonData) {
-          final note = NotesForListing(
-            noteID: item['noteID'],
-            noteTitle: item['noteTitle'],
-            createDateTime: DateTime.parse(item['createDateTime']),
-            latestEditDateTime: item['latestEditDateTime'] != null
-                ? DateTime.parse(item['latestEditDateTime'])
-                : null,
-          );
-          notes.add(note);
+          notes.add(NotesForListing.fromJSON(item));
         }
         return APIResponse<List<NotesForListing>>(data: notes);
       }
@@ -30,5 +23,16 @@ class NotesService {
           error: true, errorMessage: 'An error occured');
     }).catchError((_) => APIResponse<List<NotesForListing>>(
         error: true, errorMessage: 'An error occured'));
+  }
+
+  Future<APIResponse<Note>> getNote(String noteID) {
+    return http.get(API + '/notes' + noteID, headers: headers).then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = jsonDecode(data.body);
+        return APIResponse<Note>(data: Note.fromJson(jsonData));
+      }
+      return APIResponse<Note>(error: true, errorMessage: 'An error occured');
+    }).catchError((_) =>
+        APIResponse<Note>(error: true, errorMessage: 'An error occured'));
   }
 }

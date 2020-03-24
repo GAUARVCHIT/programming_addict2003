@@ -12,4 +12,15 @@ class NotesForListing {
     this.createDateTime,
     this.latestEditDateTime,
   });
+
+  factory NotesForListing.fromJSON(Map<String, dynamic> item) {
+    return NotesForListing(
+      noteID: item['noteID'],
+      noteTitle: item['noteTitle'],
+      createDateTime: DateTime.parse(item['createDateTime']),
+      latestEditDateTime: item['latestEditDateTime'] != null
+          ? DateTime.parse(item['latestEditDateTime'])
+          : null,
+    );
+  }
 }
