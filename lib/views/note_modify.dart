@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:programmingaddict2003/models/note_insert.dart';
 import 'package:programmingaddict2003/services/notes_services.dart';
 import 'package:programmingaddict2003/models/note.dart';
 
@@ -83,7 +84,35 @@ class noteModifyState extends State<noteModify> {
                         style: TextStyle(color: Colors.white),
                       ),
                       color: Theme.of(context).primaryColor,
-                      onPressed: Navigator.of(context).pop,
+//                      onPressed: Navigator.of(context).pop,
+                      onPressed: () async {
+                        if (isEditing) {
+                        } else {
+                          final note = NoteInsert(
+                            noteTitle: _titleController.text,
+                            noteContent: _contentController.text,
+                          );
+                          final result = await notesService.createNote(note);
+
+                          final title = 'Done';
+                          final text = result.errorMessage;
+
+                          showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                    title: Text(title),
+                                    content: Text(text),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  ));
+                        }
+                      },
                     ),
                   ),
                 ],

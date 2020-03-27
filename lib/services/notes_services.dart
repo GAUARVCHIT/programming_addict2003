@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:programmingaddict2003/models/api_response.dart';
 import 'package:programmingaddict2003/models/note.dart';
+import 'package:programmingaddict2003/models/note_insert.dart';
 import 'package:programmingaddict2003/models/notes_for_listing.dart';
 
 class NotesService {
@@ -34,5 +35,17 @@ class NotesService {
       return APIResponse<Note>(error: true, errorMessage: 'An error occured');
     }).catchError((_) =>
         APIResponse<Note>(error: true, errorMessage: 'An error occured'));
+  }
+
+  Future<APIResponse<bool>> createNote(NoteInsert item) {
+    return http
+        .post(API + '/notes', headers: headers, body: jsonEncode(item.toJson()))
+        .then((data) {
+      if (data.statusCode == 201) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(error: true, errorMessage: 'An error occured');
+    }).catchError((_) =>
+            APIResponse<Note>(error: true, errorMessage: 'An error occured'));
   }
 }
